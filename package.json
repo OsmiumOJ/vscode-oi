@@ -1,6 +1,6 @@
 {
 	"name": "vscode-oi",
-	"displayName": "vscode-oi",
+	"displayName": "VSCodeOIer专用插件",
 	"description": "A VSCode extension for OIers.",
 	"version": "0.0.1",
 	"engines": {
@@ -9,15 +9,23 @@
 	"categories": [
 		"Other"
 	],
+	"icon": "images/ooj.png",
 	"activationEvents": [
-		"onCommand:extension.helloWorld"
+		"onCommand:extension.sayHelloWorld",
+		"onCommand:extension.getCodeforcesUserCurrentRating"
 	],
-	"main": "./extension.js",
+	"main": "./src/extension.js",
 	"contributes": {
-		"commands": [{
-            "command": "extension.helloWorld",
-			"title": "Hello World"
-		}]
+		"commands": [
+			{
+				"command": "extension.getCodeforcesUserCurrentRating",
+				"title": "CodeForces: 查询用户当前Rating"
+			},
+			{
+				"command": "extension.sayHelloWorld",
+				"title": "Basic: Say 'Hello, world!'"
+			}
+		]
 	},
 	"scripts": {
 		"lint": "eslint .",
