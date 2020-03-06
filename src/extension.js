@@ -33,7 +33,7 @@ function activate(context) {
 	
 	context.subscriptions.push(vscode.commands.registerCommand('extension.getCodeforcesUserRating', () => {
 		vscode.window.showInputBox({
-			password: false,
+			// password: false,
 			ignoreFocusOut: true,
 			placeHolder: "CodeForces用户名"
 		}).then((msg) => {
@@ -64,7 +64,7 @@ function activate(context) {
 							vscode.window.showInformationMessage(`用户${msg}为unrated。`);
 						}
 						else {
-							vscode.window.showInformationMessage(`${msg}目前为${json.result[0].rank}, ${json.result[0].rating}，最高为${json.result[0].maxRank}, ${json.result[0].maxRating}。`);
+							vscode.window.showInformationMessage(`${json.result[0].handle}目前为${json.result[0].rank}, ${json.result[0].rating}，最高为${json.result[0].maxRank}, ${json.result[0].maxRating}。`);
 						}
 					}
 					else {
@@ -76,6 +76,12 @@ function activate(context) {
 			})
 		})
 	}));
+	
+	// context.subscriptions.push(vscode.commands.registerCommand('extension.getCodeforcesLatestStatus', () => {
+	// 	vscode.window.showInputBox({
+			
+	// 	})
+	// }));
 }
 exports.activate = activate;
 
