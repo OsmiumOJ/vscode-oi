@@ -5,37 +5,6 @@ const vscode = require('vscode');
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
-function codeforcesRatingLevel(rating, capitalize = false) {
-	if (rating < 1200) {
-		return capitalize ? 'Newbie' : 'newbie';
-	}
-	if (rating < 1400) {
-		return capitalize ? 'Pupil' : 'pupil';
-	}
-	if (rating < 1600) {
-		return capitalize ? 'Specialist' : 'specialist';
-	}
-	if (rating < 1900) {
-		return capitalize ? 'Expert' : 'expert';
-	}
-	if (rating < 2100) {
-		return capitalize ? 'Candidate master' : 'candidate master';
-	}
-	if (rating < 2300) {
-		return capitalize ? 'Master' : 'master';
-	}
-	if (rating < 2400) {
-		return capitalize ? 'International master' : 'international master';
-	}
-	if (rating < 2600) {
-		return capitalize ? 'Grandmaster' : 'grandmaster';
-	}
-	if (rating < 3000) {
-		return capitalize ? 'International grandmaster' : 'international grandmaster';
-	}
-	return capitalize ? 'Legendary grandmaster' : 'legendary grandmaster';
-}
-
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -62,26 +31,40 @@ function activate(context) {
 		vscode.window.showInformationMessage("Hello, world!");
 	}));
 	
-	context.subscriptions.push(vscode.commands.registerCommand('extension.getCodeforcesUserCurrentRating', () => {
+	context.subscriptions.push(vscode.commands.registerCommand('extension.getCodeforcesUserRating', () => {
 		vscode.window.showInputBox({
 			password: false,
 			ignoreFocusOut: true,
 			placeHolder: "CodeForces用户名"
 		}).then((msg) => {
 			const https = require('https');
-			https.get(`https://codeforces.ml/api/user.rating?handle=${msg}`, (ret) => {
+			let address = vscode.workspace.getConfiguration().get('vscode-oi.codeforcesAddress');
+			
+			if (address === undefined) {
+				vscode.window.showErrorMessage('CodeForces镜像站地址设置出错。请检查你的设置。');
+				return;
+			}
+			if (msg.length > 24 || msg.length < 3) {
+				vscode.window.showErrorMessage('CodeForces用户名长度应在闭区间[3,24]内。');
+			}
+			if (address[address.length - 1] !== '/') {
+				address += '/';
+			}
+			
+			https.get(`${address}api/user.info?handles=${msg}`, (ret) => {
 				let data = '';
 				ret.on('data', (chunk) => {
 					data += chunk;
 				});
+				
 				ret.on('end', () => {
 					let json = JSON.parse(data);
 					if (json.status === "OK") {
-						if (json.result.length === 0) {
-							vscode.window.showInformationMessage(`用户${msg}并没有参加任何rated的比赛，目前为unrated。`);
+						if (json.result[0].rating === undefined) {
+							vscode.window.showInformationMessage(`用户${msg}为unrated。`);
 						}
 						else {
-							vscode.window.showInformationMessage(`用户${msg}目前的rating为${json.result[json.result.length - 1].newRating}，等级为${codeforcesRatingLevel(json.result[json.result.length - 1].newRating)}。`);
+							vscode.window.showInformationMessage(`${msg}目前为${json.result[0].rank}, ${json.result[0].rating}，最高为${json.result[0].maxRank}, ${json.result[0].maxRating}。`);
 						}
 					}
 					else {
@@ -92,7 +75,7 @@ function activate(context) {
 				vscode.window.showErrorMessage(`HTTP请求错误：${err}`);
 			})
 		})
-	}))
+	}));
 }
 exports.activate = activate;
 

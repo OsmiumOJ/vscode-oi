@@ -16,10 +16,25 @@
 	],
 	"main": "./src/extension.js",
 	"contributes": {
+		"configuration": {
+			"title": "VSCode-OI",
+			"properties": {
+				"vscode-oi.codeforcesAddress": {
+					"type": "string",
+					"default": "https://codeforces.com/",
+					"description": "CodeForces镜像站地址，需要带上协议名"
+				},
+				"vscode-oi.codeforcesUsername": {
+					"type": "string",
+					"default": "",
+					"description": "CodeForce用户名"
+				}
+			}
+		},
 		"commands": [
 			{
-				"command": "extension.getCodeforcesUserCurrentRating",
-				"title": "CodeForces: 查询用户当前Rating"
+				"command": "extension.getCodeforcesUserRating",
+				"title": "CodeForces: 查询用户Rating"
 			},
 			{
 				"command": "extension.sayHelloWorld",
